@@ -12,7 +12,6 @@ client.connect(err => {
 	for(let i=0; i<10; i++) {
 		fullName = `${faker.name.firstName()} ${faker.name.lastName()}`;
 		fake_pass = faker.internet.password();
-		fake_pass = bcrypt.hashSync(fake_pass, 10);
 		fake_address = faker.address.city()
 		name.push(fullName);
 		password.push(fake_pass);
@@ -33,6 +32,11 @@ client.connect(err => {
 				password: password[i],
 				address: address[i]
 			})
+		}
+
+        fake_pass = bcrypt.hashSync(fake_pass, 10);
+        for(let i=0; i<10; i++) {
+			collection.updateOne({name: name[i]}, {$set: {password: fake_pass}})
 		}
 	}
 	catch(err) {

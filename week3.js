@@ -34,8 +34,9 @@ client.connect(err => {
 			})
 		}
 
-        fake_pass = bcrypt.hashSync(fake_pass, 10);
+        
         for(let i=0; i<10; i++) {
+			fake_pass = bcrypt.hashSync(fake_pass[i], 10);
 			collection.updateOne({name: name[i]}, {$set: {password: fake_pass}})
 		}
 	}

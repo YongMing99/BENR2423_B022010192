@@ -1,0 +1,86 @@
+Query Operators - Comparison
+
+1. How many documents in the sample_training.zips collection have fewer than
+   1000 people listed in the pop field?
+db.zips.find({"pop":{"$lt":1000}}).count()
+8065
+
+2. What is the difference between the number of people born in 1998 and the
+   number of people born after 1998 in the sample_training.trips collection?
+db.trips.find({"birth year":{"$gt":1998}}).count()
+18
+db.trips.find({"birth year":1998}).count()
+12
+Difference: 18 - 12 = 6
+
+3. Using the sample_training.routes collection find out which of the
+   following statements will return all routes that have at least one stop
+   in them?
+
+        -  db.routes.find({ "stops": { "$gt": 0 }}).pretty()
+        -  db.routes.find({ "stops": { "$ne": 0 }}).pretty()
+
+
+Query Operators - Logic
+
+1. How many businesses in the sample_training.inspections dataset have the
+   inspection result "Out of Business" and belong to the Home Improvement
+   Contractor - 100 sector?
+db.inspections.find({"$and":[{"result":"Out of Business"},{"sector":"Home Improvement Contractor - 100"}]}).count()
+4
+
+2. How many zips in the sample_training.zips dataset are neither over-
+   populated nor under-populated?
+   In this case, we consider population over 1,000,000 to be over-populated
+   and under 5,000 to be under-populated.
+db.zips.find({"pop":{"$lte":1000000,"$gte":5000}}).count()
+11193
+
+3. How many companies in the sample_training.companies dataset were either
+   founded in 2004, or in the month of October and either have the social
+   category_code or web category_code?
+db.companies.find({"$or":[{"$and":[{"founded_year":2004},{"$or":[{"category_code":"social"},{"category_code":"web"}]}]},{"$and":[{"founded_month":10},{"$or":[{"category_code":"social"},{"category_code":"web"}]}]}]}).count()
+149
+
+
+Expressive Query Operator
+
+1. How many companies in the sample_training.companies collection have the same
+   permalink as their twitter_username?
+db.companies.find({"$expr":{"$eq":["$permalink","$twitter_username"]}}).count()
+1299
+
+
+Array Operators
+
+1. What is the name of the listing in the sample_airbnb.listingsAndReviews
+   dataset accommodate more than 6 people and has exactly 50 reviews?
+db.listingsAndReviews.find({"$and":[{"accommodates":{"$gt":6}},{"reviews":{"$size":50}}]}).pretty()
+Sunset Beach Lodge Retreat
+
+2. How many documents have the property_type House, and include Changing
+   table as one of the amenities?
+db.listingsAndReviews.find({"$and":[{"property_type":"House"},{"amenities":"Changing table"}]}).count()
+11
+
+
+Array Operators and Projection
+
+1. How many companies in the sample_training.companies collection have offices
+   in the city of Seattle?
+db.companies.find({"offices":{"$elemMatch":{"city":"Seattle"}}}).count()
+117
+
+Array Operators and Sub-Documents
+
+1. Latitude decreases in value as you move west.
+
+   How many trips in the sample_training.trips collection started at
+   stations that are to the west of the -74 latitude coordinate?
+db.trips.find({"start station location.coordinates.0":{"$lte":-74}}).count()
+1928
+
+2. How many inspections from the sample_training.inspections collection were
+   conducted in the city of NEW YORK?
+db.inspections.find({"address.city":"NEW YORK"}).count()
+18279
